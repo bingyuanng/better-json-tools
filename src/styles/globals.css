@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 212 34% 10%;
+    --foreground: 210 33% 96%;
+    --card: 215 30% 13%;
+    --card-foreground: 210 40% 98%;
+    --popover: 215 30% 12%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 197 82% 78%;
+    --primary-foreground: 214 60% 10%;
+    --secondary: 214 22% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 214 24% 18%;
+    --muted-foreground: 214 16% 68%;
+    --accent: 197 55% 22%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 7 72% 52%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 22% 24%;
+    --input: 214 22% 24%;
+    --ring: 191 74% 70%;
+    --brand: 24 93% 61%;
+    --cyan: 188 88% 60%;
+    --glow: 48 92% 63%;
+    --surface: 214 26% 15%;
+    --canvas: 218 34% 9%;
+    --shadow: 220 50% 2%;
+    --radius: 0.15rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  ::selection {
+    background: hsl(var(--brand) / 0.28);
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.28);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.42);
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+
+  .bj-cm,
+  .bj-cm .cm-editor,
+  .bj-cm .cm-scroller,
+  .bj-cm .cm-content {
+    background: #2e3440 !important;
+    color: #d8dee9 !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  }
+
+  .bj-cm .cm-content {
+    caret-color: #eceff4 !important;
+    line-height: 1.6 !important;
+    min-height: 100% !important;
+    padding: 12px 0 !important;
+  }
+
+  .bj-cm .cm-line {
+    padding: 0 16px !important;
+  }
+
+  .bj-cm .cm-gutters {
+    background: #3b4252 !important;
+    border-right: 1px solid #4c566a !important;
+    color: #81a1c1 !important;
+  }
+
+  .bj-cm .cm-activeLine {
+    background: #3b4252 !important;
+  }
+
+  .bj-cm .cm-activeLineGutter {
+    background: #434c5e !important;
+  }
+
+  .bj-cm .cm-cursor {
+    border-left-color: #eceff4 !important;
+  }
+
+  .bj-cm .cm-selectionBackground,
+  .bj-cm.cm-focused .cm-selectionBackground,
+  .bj-cm .cm-focused .cm-selectionBackground,
+  .bj-cm .cm-content ::selection {
+    background: #4c566a !important;
+    color: #eceff4 !important;
+  }
+
+  .bj-cm .cm-placeholder {
+    color: #616e88 !important;
+  }
+
+  .bj-cm .cm-announced {
+    display: none !important;
+  }
+}

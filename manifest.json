@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Better JSON Tools",
+  "description": "Prettify JSON responses in the browser with a searchable, collapsible viewer.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "Better JSON Tools"
+  },
+  "background": {
+    "service_worker": "background/serviceWorker.js"
+  },
+  "permissions": [],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/contentScript.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["viewer/viewer.css", "viewer/viewer.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
