@@ -1,5 +1,16 @@
 import React from "react";
 
+export function useDebouncedValue<T>(value: T, delayMs = 150) {
+  const [debounced, setDebounced] = React.useState(value);
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => setDebounced(value), delayMs);
+    return () => window.clearTimeout(timer);
+  }, [value, delayMs]);
+
+  return debounced;
+}
+
 export function trimJsonText(text: string) {
   return text.replace(/[\t ]+$/gm, "").replace(/(?:\r?\n)+$/, "");
 }
