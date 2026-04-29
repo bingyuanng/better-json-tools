@@ -21,6 +21,12 @@ export function isJsonTopLevel(value: unknown): value is Record<string, unknown>
   return !!value && typeof value === "object";
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error) return String((error as { message: unknown }).message);
+  return String(error);
+}
+
 export function tryParseJson(text: string): { ok: true; value: unknown; raw: string } | { ok: false; error: string } {
   const raw = (text ?? "").trim();
   if (!raw) return { ok: false, error: "Empty input" };
@@ -29,8 +35,8 @@ export function tryParseJson(text: string): { ok: true; value: unknown; raw: str
     const value = JSON.parse(raw);
     if (!isJsonTopLevel(value)) return { ok: false, error: "Top-level JSON is not an object/array" };
     return { ok: true, value, raw };
-  } catch (e) {
-    return { ok: false, error: e && typeof e === "object" && "message" in e ? String((e as any).message) : String(e) };
+  } catch (error) {
+    return { ok: false, error: getErrorMessage(error) };
   }
 }
 

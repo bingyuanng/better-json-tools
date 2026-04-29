@@ -35,6 +35,7 @@ function inferMode(initial: Window["__BJ_INITIAL_STATE__"]): "paste" | "inpage" 
   return "paste";
 }
 
+
 function waitForPostedInitialState(timeoutMs = 1000) {
   return new Promise<Window["__BJ_INITIAL_STATE__"] | undefined>((resolve) => {
     const timer = window.setTimeout(() => {

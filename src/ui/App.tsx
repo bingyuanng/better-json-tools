@@ -18,7 +18,7 @@ export function App({
     if (typeof window === "undefined") return "light";
     const saved = window.localStorage.getItem("bj-theme") as "light" | "dark" | "system" | null;
     if (saved === "light" || saved === "dark") return saved;
-    return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "dark";
+    return window.matchMedia?.("(prefers-color-scheme: dark)")?.matches ? "dark" : "light";
   });
 
   React.useEffect(() => {

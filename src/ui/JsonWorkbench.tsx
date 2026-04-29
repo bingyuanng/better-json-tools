@@ -28,6 +28,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { stableStringify, tryParseJson } from "../lib/json";
+import { formatBytes, getJsonStats, highlightJson, sanitizeReplCode, trimJsonText } from "./jsonWorkbenchUtils";
 import { JsonTree } from "./JsonTree";
 
 async function copyText(text: string) {
@@ -117,91 +118,6 @@ const codeMirrorTheme = EditorView.theme(
 
 const codeMirrorExtensions = [Prec.highest(syntaxHighlighting(nordHighlightStyle, { fallback: true }))];
 
-function getJsonStats(value: unknown) {
-  const stats = { nodes: 0, objects: 0, arrays: 0, scalars: 0 };
-  function walk(node: unknown) {
-    stats.nodes += 1;
-    if (Array.isArray(node)) {
-      stats.arrays += 1;
-      node.forEach(walk);
-    } else if (node && typeof node === "object") {
-      stats.objects += 1;
-      Object.values(node as Record<string, unknown>).forEach(walk);
-    } else {
-      stats.scalars += 1;
-    }
-  }
-  walk(value);
-  return stats;
-}
-
-function formatBytes(chars: number) {
-  if (chars < 1024) return `${chars} B`;
-  if (chars < 1024 * 1024) return `${(chars / 1024).toFixed(1)} KB`;
-  return `${(chars / 1024 / 1024).toFixed(1)} MB`;
-}
-
-function highlightJson(text: string) {
-  if (!text) return null;
-
-  const tokenPattern = /("(?:\\.|[^"\\])*")(\s*:)?|\b(?:true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|[{}[\],:]/g;
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = tokenPattern.exec(text))) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-
-    const token = match[0];
-    const stringToken = match[1];
-    const keySuffix = match[2] ?? "";
-    const key = `${match.index}-${tokenPattern.lastIndex}`;
-
-    if (stringToken && keySuffix) {
-      parts.push(
-        <React.Fragment key={key}>
-          <span className="text-sky-300">{stringToken}</span>
-          <span className="text-muted-foreground">{keySuffix}</span>
-        </React.Fragment>
-      );
-    } else if (stringToken) {
-      parts.push(
-        <span key={key} className="text-emerald-300">
-          {token}
-        </span>
-      );
-    } else if (token === "true" || token === "false") {
-      parts.push(
-        <span key={key} className="text-amber-300">
-          {token}
-        </span>
-      );
-    } else if (token === "null") {
-      parts.push(
-        <span key={key} className="text-muted-foreground">
-          {token}
-        </span>
-      );
-    } else if (/^-?\d/.test(token)) {
-      parts.push(
-        <span key={key} className="text-orange-300">
-          {token}
-        </span>
-      );
-    } else {
-      parts.push(
-        <span key={key} className="text-muted-foreground">
-          {token}
-        </span>
-      );
-    }
-
-    lastIndex = tokenPattern.lastIndex;
-  }
-
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts;
-}
 
 function ResizeHandle({ direction }: { direction: "horizontal" | "vertical" }) {
   return (
@@ -386,11 +302,7 @@ export function JsonWorkbench({
   }
 
   async function runRepl() {
-    const code = replCode
-      .replace(/^\/\/ JSON is loaded as: data\s*\n?/, "")
-      .replace(/^\/\/ Current JSON is available as `data`\s*\n?/, "")
-      .replace(/^\/\/ Try: data\s*\n?/, "")
-      .trim();
+    const code = sanitizeReplCode(replCode);
     if (!code) {
       setReplResult("");
       setReplError(null);
@@ -451,7 +363,7 @@ export function JsonWorkbench({
     const target = e.currentTarget;
     const start = target.selectionStart;
     const end = target.selectionEnd;
-    const cleaned = pasted.replace(/[\t ]+$/gm, "").replace(/(?:\r?\n)+$/, "");
+    const cleaned = trimJsonText(pasted);
     const nextText = rawText.slice(0, start) + cleaned + rawText.slice(end);
     const nextPos = start + cleaned.length;
     updateEditorText(nextText, nextPos, nextPos);
@@ -610,7 +522,7 @@ export function JsonWorkbench({
                 extensions={[json(), ...codeMirrorExtensions, validateKeymap]}
                 theme={codeMirrorTheme}
                 placeholder="Paste JSON here..."
-                onChange={(value) => setRawText(value.replace(/[\t ]+$/gm, "").replace(/(?:\r?\n)+$/, ""))}
+                onChange={(value) => setRawText(trimJsonText(value))}
                 onKeyDown={(e) => {
                   if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
                     e.preventDefault();

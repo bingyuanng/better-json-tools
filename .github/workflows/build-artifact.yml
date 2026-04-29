@@ -1,0 +1,40 @@
+name: Build distribution artifact
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Package dist folder
+        run: |
+          cd dist
+          zip -r ../better-json-tools-dist.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: better-json-tools-dist
+          path: better-json-tools-dist.zip
+          if-no-files-found: error
+          retention-days: 30

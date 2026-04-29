@@ -1,0 +1,58 @@
+name: Build and publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Package dist folder
+        run: |
+          cd dist
+          zip -r ../better-json-tools-${GITHUB_REF_NAME}.zip .
+
+      - name: Generate release notes
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF_NAME}^ 2>/dev/null || true)
+          {
+            echo "# ${GITHUB_REF_NAME}"
+            echo
+            echo "## Changes"
+            echo
+            if [ -n "$LAST_TAG" ]; then
+              git log --pretty=format:'- %s' ${LAST_TAG}..${GITHUB_REF_NAME}
+            else
+              git log --pretty=format:'- %s' ${GITHUB_REF_NAME}
+            fi
+          } > RELEASE_NOTES.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: better-json-tools-${{ github.ref_name }}.zip
+          body_path: RELEASE_NOTES.md

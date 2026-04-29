@@ -113,18 +113,7 @@ export function JsonTree({
     collapseAll: () => void;
   } | null>;
 }) {
-  const [expanded, setExpanded] = React.useState<Set<string>>(() => {
-    const all = new Set<string>();
-    function walk(node: unknown, path: PathPart[]) {
-      all.add(pathToString(path));
-      if (isArray(node)) node.forEach((child, idx) => walk(child, path.concat([idx])));
-      else if (isObject(node)) {
-        for (const key of Object.keys(node)) walk(node[key], path.concat([key]));
-      }
-    }
-    walk(value, []);
-    return all;
-  });
+  const [expanded, setExpanded] = React.useState<Set<string>>(() => new Set(["$"]));
 
   const matches = React.useMemo(() => collectMatches(value, query, sortKeys), [value, query, sortKeys]);
 
@@ -214,8 +203,6 @@ export function JsonTree({
 
     const isActiveMatch = !!activeMatchPathStr && activeMatchPathStr === id;
     const childCount = isArray(node) ? node.length : isObject(node) ? Object.keys(node).length : 0;
-    const nodeText = stableStringify(node, sortKeys) ?? String(node);
-    const keyValueText = keyLabel ? `${keyLabel}: ${nodeText}` : nodeText;
 
     return (
       <div
@@ -236,7 +223,8 @@ export function JsonTree({
             onSelectedPathChanged?.(id);
           }}
           onClick={() => {
-            onCopyText?.(keyValueText, keyLabel ? "Copied key value" : "Copied value");
+            const nodeText = stableStringify(node, sortKeys) ?? String(node);
+            onCopyText?.(keyLabel ? `${keyLabel}: ${nodeText}` : nodeText, keyLabel ? "Copied key value" : "Copied value");
           }}
         >
           <button
@@ -297,7 +285,8 @@ export function JsonTree({
                 className="inline-flex h-5 items-center border border-border bg-background px-1.5 text-[10px] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onCopyText?.(keyValueText, "Copied key value");
+                  const nodeText = stableStringify(node, sortKeys) ?? String(node);
+                  onCopyText?.(`${keyLabel}: ${nodeText}`, "Copied key value");
                 }}
                 title="Copy Key Value"
               >
@@ -310,6 +299,7 @@ export function JsonTree({
                 className="inline-flex h-5 items-center border border-border bg-background px-1.5 text-[10px] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
+                  const nodeText = stableStringify(node, sortKeys) ?? String(node);
                   onCopyText?.(nodeText, "Copied node");
                 }}
                 title="Copy node"
