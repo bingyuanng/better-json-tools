@@ -13,6 +13,14 @@ export default defineConfig({
       output: {
         entryFileNames: "assets/viewer.js",
         chunkFileNames: "assets/chunk-[hash].js",
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("codemirror") || id.includes("@codemirror")) return "codemirror";
+            if (id.includes("react-dom") || id.includes("react")) return "react";
+            if (id.includes("lucide-react")) return "icons";
+            return "vendor";
+          }
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.name && assetInfo.name.endsWith(".css")) return "assets/viewer.css";
           return "assets/[name]-[hash][extname]";

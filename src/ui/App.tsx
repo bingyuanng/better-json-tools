@@ -1,7 +1,8 @@
 import React from "react";
 import { Braces, Moon, Sun } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { JsonWorkbench } from "./JsonWorkbench";
+
+const JsonWorkbench = React.lazy(() => import("./JsonWorkbench").then((m) => ({ default: m.JsonWorkbench })));
 
 export function App({
   mode,
@@ -51,7 +52,11 @@ export function App({
       </header>
 
       <main className="w-full px-4 pb-4 pt-4">
-        <JsonWorkbench mode={mode} initialRawText={initialRawText} initialValue={initialValue} />
+        <React.Suspense
+          fallback={<div className="grid min-h-[40vh] place-items-center text-sm text-muted-foreground">Loading…</div>}
+        >
+          <JsonWorkbench mode={mode} initialRawText={initialRawText} initialValue={initialValue} />
+        </React.Suspense>
       </main>
     </div>
   );
