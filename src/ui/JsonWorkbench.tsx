@@ -827,7 +827,7 @@ export function JsonWorkbench({
         <CardContent className="flex min-h-0 flex-1 flex-col gap-3 px-4 pb-4">
           <PanelGroup orientation={replLayout === "horizontal" ? "horizontal" : "vertical"} className="min-h-0 flex-1">
             <Panel defaultSize={65} minSize={25} className="min-h-0 min-w-0 overflow-hidden">
-          <div className="h-full min-h-[120px] overflow-hidden border border-border bg-[hsl(var(--canvas)/0.92)] text-sm focus-within:border-ring">
+          <div className="h-full min-h-[120px] overflow-auto border border-border bg-[hsl(var(--canvas)/0.92)] text-sm focus-within:border-ring">
             <CodeMirror
               className="bj-cm"
               value={replCode}

@@ -232,8 +232,10 @@ export function JsonTree({
             matchHighlight ? "bg-accent/35" : undefined,
             isActiveMatch ? "ring-2 ring-ring ring-offset-2 ring-offset-background" : undefined
           )}
-          onClick={() => {
+          onMouseEnter={() => {
             onSelectedPathChanged?.(id);
+          }}
+          onClick={() => {
             onCopyText?.(keyValueText, keyLabel ? "Copied key value" : "Copied value");
           }}
         >
@@ -265,7 +267,6 @@ export function JsonTree({
               )}
               onClick={(e) => {
                 e.stopPropagation();
-                onSelectedPathChanged?.(id);
                 onCopyValue(node);
               }}
             >
@@ -284,7 +285,6 @@ export function JsonTree({
               className="inline-flex h-5 items-center gap-1 border border-border bg-background px-1.5 text-[10px] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               onClick={(e) => {
                 e.stopPropagation();
-                onSelectedPathChanged?.(id);
                 onCopyValue(node);
               }}
               title="Copy value"
@@ -297,7 +297,6 @@ export function JsonTree({
                 className="inline-flex h-5 items-center border border-border bg-background px-1.5 text-[10px] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSelectedPathChanged?.(id);
                   onCopyText?.(keyValueText, "Copied key value");
                 }}
                 title="Copy Key Value"
@@ -311,7 +310,6 @@ export function JsonTree({
                 className="inline-flex h-5 items-center border border-border bg-background px-1.5 text-[10px] text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSelectedPathChanged?.(id);
                   onCopyText?.(nodeText, "Copied node");
                 }}
                 title="Copy node"
@@ -338,5 +336,7 @@ export function JsonTree({
     );
   }
 
-  return <div className="grid gap-1">{renderNode(value, [], null)}</div>;
+  return (
+    <div className="grid gap-1" onMouseLeave={() => onSelectedPathChanged?.("$")}>{renderNode(value, [], null)}</div>
+  );
 }

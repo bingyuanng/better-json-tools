@@ -83,6 +83,18 @@
     padding: 12px 0 !important;
   }
 
+  .bj-cm .cm-scroller {
+    overflow: auto !important;
+  }
+
+  .bj-cm .cm-editor {
+    height: 100% !important;
+  }
+
+  .bj-cm {
+    height: 100% !important;
+  }
+
   .bj-cm .cm-line {
     padding: 0 16px !important;
   }
