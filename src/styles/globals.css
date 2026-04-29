@@ -4,6 +4,35 @@
 
 @layer base {
   :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 198 93% 40%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 199 89% 94%;
+    --accent-foreground: 198 93% 28%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 198 93% 40%;
+    --brand: 24 93% 50%;
+    --cyan: 188 88% 40%;
+    --glow: 48 92% 50%;
+    --surface: 0 0% 100%;
+    --canvas: 210 40% 97%;
+    --shadow: 220 50% 90%;
+    --radius: 0.15rem;
+  }
+
+  .dark {
     --background: 212 34% 10%;
     --foreground: 210 33% 96%;
     --card: 215 30% 13%;
@@ -29,7 +58,6 @@
     --surface: 214 26% 15%;
     --canvas: 218 34% 9%;
     --shadow: 220 50% 2%;
-    --radius: 0.15rem;
   }
 
   * {
@@ -71,13 +99,13 @@
   .bj-cm .cm-editor,
   .bj-cm .cm-scroller,
   .bj-cm .cm-content {
-    background: #2e3440 !important;
-    color: #d8dee9 !important;
+    background: hsl(var(--canvas)) !important;
+    color: hsl(var(--foreground)) !important;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   }
 
   .bj-cm .cm-content {
-    caret-color: #eceff4 !important;
+    caret-color: hsl(var(--foreground)) !important;
     line-height: 1.6 !important;
     min-height: 100% !important;
     padding: 12px 0 !important;
@@ -100,33 +128,33 @@
   }
 
   .bj-cm .cm-gutters {
-    background: #3b4252 !important;
-    border-right: 1px solid #4c566a !important;
-    color: #81a1c1 !important;
+    background: hsl(var(--card)) !important;
+    border-right: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .bj-cm .cm-activeLine {
-    background: #3b4252 !important;
+    background: hsl(var(--muted)) !important;
   }
 
   .bj-cm .cm-activeLineGutter {
-    background: #434c5e !important;
+    background: hsl(var(--muted)) !important;
   }
 
   .bj-cm .cm-cursor {
-    border-left-color: #eceff4 !important;
+    border-left-color: hsl(var(--foreground)) !important;
   }
 
   .bj-cm .cm-selectionBackground,
   .bj-cm.cm-focused .cm-selectionBackground,
   .bj-cm .cm-focused .cm-selectionBackground,
   .bj-cm .cm-content ::selection {
-    background: #4c566a !important;
-    color: #eceff4 !important;
+    background: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
   }
 
   .bj-cm .cm-placeholder {
-    color: #616e88 !important;
+    color: hsl(var(--muted-foreground)) !important;
   }
 
   .bj-cm .cm-announced {

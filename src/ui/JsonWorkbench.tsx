@@ -253,6 +253,7 @@ export function JsonWorkbench({
   const [replError, setReplError] = React.useState<string | null>(null);
   const [replSandboxReady, setReplSandboxReady] = React.useState(false);
   const [replLayout, setReplLayout] = React.useState<"vertical" | "horizontal">("vertical");
+  const [replLastRun, setReplLastRun] = React.useState<{ at: number; ok: boolean } | null>(null);
   const [selectedPath, setSelectedPath] = React.useState("$");
 
   const treeApiRef = React.useRef<{ matchCount: number; focusMatch: (idx: number) => void; expandAll: () => void; collapseAll: () => void } | null>(
@@ -393,12 +394,14 @@ export function JsonWorkbench({
     if (!code) {
       setReplResult("");
       setReplError(null);
+      setReplLastRun(null);
       return;
     }
 
     const frame = replFrameRef.current?.contentWindow;
     if (!frame || !replSandboxReady) {
       setReplError("REPL sandbox is not ready yet.");
+      setReplLastRun({ at: Date.now(), ok: false });
       return;
     }
 
@@ -432,9 +435,11 @@ export function JsonWorkbench({
       if (output.result !== undefined) sections.push(formatReplValue(output.result));
       setReplResult(sections.join("\n"));
       setReplError(null);
+      setReplLastRun({ at: Date.now(), ok: true });
     } catch (e) {
       setReplResult("");
       setReplError(e instanceof Error ? e.message : String(e));
+      setReplLastRun({ at: Date.now(), ok: false });
     }
   }
 
@@ -867,7 +872,15 @@ export function JsonWorkbench({
             </Panel>
           </PanelGroup>
           <div className="flex shrink-0 items-center justify-between gap-3">
-            <div className="font-mono text-[11px] text-muted-foreground">Press ⌘/Ctrl + Enter to run</div>
+            <div className="font-mono text-[11px] text-muted-foreground">
+              {replLastRun ? (
+                <span>
+                  Last run {new Date(replLastRun.at).toLocaleTimeString()} · {replLastRun.ok ? "success" : "error"}
+                </span>
+              ) : (
+                <span>Press ⌘/Ctrl + Enter to run</span>
+              )}
+            </div>
             <Button variant="secondary" size="sm" onClick={runRepl}>Run</Button>
           </div>
         </CardContent>
